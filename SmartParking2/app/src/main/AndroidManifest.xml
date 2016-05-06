@@ -37,6 +37,9 @@
         <activity
             android:name=".SearchResultMapsActivity"
             android:label="@string/title_activity_search_result_maps"></activity>
+
+        <activity android:name=".RangeActivity" />
+        <activity android:name=".SearchActivity"></activity>
     </application>
 
 </manifest>

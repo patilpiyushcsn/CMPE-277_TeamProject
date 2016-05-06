@@ -16,4 +16,9 @@
     <string name="parking_lots_data_field_info_location">location</string>
     <string name="parking_lots_data_field_info_status">status</string>
 
+    <string name="btn_findParking">Find Parking</string>
+    <string name="lbl_searchRange">Select Search Range</string>
+    <string name="lbl_miles">mile(s)</string>
+    <string name="lbl_cityZip">Where would you like to park?</string>
+    <string name="btnlbl_Next">Next</string>
 </resources>
