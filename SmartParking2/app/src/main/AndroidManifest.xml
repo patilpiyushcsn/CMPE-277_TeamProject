@@ -22,6 +22,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name=".ParkingLotUpdateService" android:exported="false" />
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -36,10 +39,9 @@
 
         <activity
             android:name=".SearchResultMapsActivity"
-            android:label="@string/title_activity_search_result_maps"></activity>
-
+            android:label="@string/title_activity_search_result_maps" />
         <activity android:name=".RangeActivity" />
-        <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".SearchActivity" />
     </application>
 
 </manifest>

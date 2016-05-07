@@ -8,6 +8,7 @@
     <string name="bundle_search_latitude">latitude</string>
     <string name="bundle_search_longitude">longitude</string>
     <string name="bundle_search_range">range</string>
+    <string name="bundle_parking_lots_info">parking_lots_info</string>
 
     <string name="user_data_location">location</string>
     <string name="user_data_range">range</string>

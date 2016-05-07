@@ -1,6 +1,9 @@
 package com.example.piyush.smartparking;
 
 import android.Manifest;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,11 +30,19 @@ public class MainActivity extends AppCompatActivity {
 
     LocationListener locationListener;
 
+    private double latitude = 0.0, longitude = 0.0;
+
+    private View progressView, msgView;
+
+    private boolean located = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        progressView = findViewById(R.id.location_progress);
+        msgView = findViewById(R.id.searching_msg);
 
         //get location services
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -40,7 +51,18 @@ public class MainActivity extends AppCompatActivity {
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                Toast.makeText(getApplicationContext(), "Latitude: " + location.getLatitude() + " Longitude: " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+                if (!located) {
+                    located = true;
+                    latitude = location.getLatitude();
+                    longitude = location.getLongitude();
+
+                    showProgress(false);
+
+                    Intent rangeIntent = new Intent(MainActivity.this, RangeActivity.class);
+                    rangeIntent.putExtra(getString(R.string.bundle_search_latitude), latitude);
+                    rangeIntent.putExtra(getString(R.string.bundle_search_longitude), longitude);
+                    startActivity(rangeIntent);
+                }
             }
 
             @Override
@@ -70,21 +92,47 @@ public class MainActivity extends AppCompatActivity {
         locationManager.requestLocationUpdates("gps", 5000, 0, locationListener);
     }
 
+    protected void showSearchActivity() {
+        Intent searchIntent = new Intent(MainActivity.this, SearchActivity.class);
+        startActivity(searchIntent);
+    }
+
+    /**
+     * Shows the progress UI and hides the login form.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+        // for very easy animations. If available, use these APIs to fade-in
+        // the progress spinner.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+            progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            msgView.setVisibility(show ? View.VISIBLE : View.GONE);
+            progressView.animate().setDuration(shortAnimTime).alpha(
+                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                    msgView.setVisibility(show ? View.VISIBLE : View.GONE);
+                }
+            });
+        } else {
+            // The ViewPropertyAnimator APIs are not available, so simply show
+            // and hide the relevant UI components.
+            progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            msgView.setVisibility(show ? View.VISIBLE : View.GONE);
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
 
-        //check whether location services are ON/OFF
-        if(statusCheck() == 0)
-        {
-            //if location services are on then move to select range
-            Intent rangeIntent = new Intent(MainActivity.this, RangeActivity.class);
-            startActivity(rangeIntent);
-        }
-        else
-        {
-            statusCheck();
-        }
+        located = false;
+
+        statusCheck();
     }
 
     public int statusCheck()
@@ -97,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
+            showProgress(true);
             return 0;
         }
     }
@@ -107,18 +156,18 @@ public class MainActivity extends AppCompatActivity {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog,  final int id) {
                         startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+
+                        //Show progress
+                        showProgress(true);
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, final int id) {
                         //Do not want to use location services then search the address
-                        Intent searchIntent = new Intent(MainActivity.this, SearchActivity.class);
-                        startActivity(searchIntent);
-                        dialog.cancel();
+                        showSearchActivity();
                     }
                 });
         final AlertDialog alert = builder.create();
         alert.show();
-
     }
 }
