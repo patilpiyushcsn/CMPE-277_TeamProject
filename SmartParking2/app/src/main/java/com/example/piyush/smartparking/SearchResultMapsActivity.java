@@ -42,7 +42,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 public class SearchResultMapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private String latitude, longitude, range, destLatitude, destLongitude;
+    private String latitude = "", longitude = "", range = "", destLatitude = "", destLongitude = "";
     private float defaultZoomLevel = 14.0f;
 
     private JSONObject jsonObject;
@@ -71,11 +71,10 @@ public class SearchResultMapsActivity extends FragmentActivity implements OnMapR
             public void onReceive(Context context, Intent intent) {
                 mMap.clear();
 
-                LatLng userlocation = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
-                mMap.addMarker(new MarkerOptions().position(userlocation).title(getString(R.string.title_marker_user_location)));
+                LatLng userLocation = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));
+                mMap.addMarker(new MarkerOptions().position(userLocation).title(getString(R.string.title_marker_user_location)));
 
                 parseData(intent.getStringExtra(getString(R.string.bundle_parking_lots_info)));
-
             }
         };
 
@@ -137,7 +136,7 @@ public class SearchResultMapsActivity extends FragmentActivity implements OnMapR
 
         };
 
-        new GMapV2DirectionAsyncTask(handler, sourcePosition, destPosition, GMapV2Direction.MODE_DRIVING).execute();
+        new GMapV2DirectionAsyncTask(handler, sourcePosition, destPosition, mode).execute();
     }
 
     private void parseData(String parkingLots) {
@@ -154,20 +153,24 @@ public class SearchResultMapsActivity extends FragmentActivity implements OnMapR
                     String location = parkingLotInto.getString(getString(R.string.parking_lots_data_field_info_location));
                     String[] latlon = location.split(", ");
                     String id = parkingLotInto.getString("idSensor");
+                    String cost = parkingLotInto.getString("cost");
 
                     LatLng parkingLotLocation = new LatLng(Double.parseDouble(latlon[0]), Double.parseDouble(latlon[1]));
-                    mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.park_icon)).position(parkingLotLocation).title(Integer.toString(index)));
+                    mMap.addMarker(new MarkerOptions().icon(BitmapDescriptorFactory.fromResource(R.mipmap.park_icon)).position(parkingLotLocation).title(Integer.toString(index) + ", Cost: " + cost));
                     mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                         @Override
                         public boolean onMarkerClick(Marker marker) {
                             String title = marker.getTitle();
+                            stopService(new Intent(getBaseContext(), ParkingLotUpdateService.class));
+
                             if (polylin != null) {
                                 polylin.remove();
                             }
                             try {
                                 JSONArray jsonArray = jsonObject.getJSONArray(getString(R.string.parking_lots_data_field_root));
 
-                                String location = jsonArray.getJSONObject(Integer.parseInt(title)).getString(getString(R.string.parking_lots_data_field_info_location));
+                                String[] parts = title.split(",");
+                                String location = jsonArray.getJSONObject(Integer.parseInt(parts[0])).getString(getString(R.string.parking_lots_data_field_info_location));
                                 String[] latlon = location.split(", ");
 
                                 LatLng sourcePosition = new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude));

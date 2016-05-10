@@ -36,6 +36,10 @@ public class ParkingLotUpdateService extends Service {
 
             while (true) {
                 try {
+                    if (isStopped) {
+                        break;
+                    }
+
                     HttpConnectionHelper connectionHelper;
                     connectionHelper = new HttpConnectionHelper(url, "POST", HttpConnectionHelper.DEFAULT_CONNECT_TIME_OUT);
                     connectionHelper.setRequestProperty("Content-type", "application/json");
