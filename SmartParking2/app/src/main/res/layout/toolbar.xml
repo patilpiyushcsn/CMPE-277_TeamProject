@@ -8,9 +8,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
+        android:textStyle="bold"
         android:layout_gravity="center"
         android:id="@+id/toolbar_title"
-        android:textSize="@dimen/abc_action_bar_content_inset_material"
-        android:textColor="@color/abc_input_method_navigation_guard" />
+        android:textIsSelectable="false"
+        android:textSize="18dp" />
 
 </android.support.v7.widget.Toolbar>

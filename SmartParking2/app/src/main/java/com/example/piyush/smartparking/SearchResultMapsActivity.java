@@ -49,6 +49,7 @@ public class SearchResultMapsActivity extends FragmentActivity implements OnMapR
     private Polyline polylin = null;
 
     private BroadcastReceiver parkingLotsMessageReceiver = null;
+    private Intent serviceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +89,13 @@ public class SearchResultMapsActivity extends FragmentActivity implements OnMapR
         startActivity(intent);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        stopService(serviceIntent);
+    }
+
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -106,11 +114,11 @@ public class SearchResultMapsActivity extends FragmentActivity implements OnMapR
         mMap.addMarker(new MarkerOptions().position(userlocation).title(getString(R.string.title_marker_user_location)));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userlocation, defaultZoomLevel ));
 
-        Intent intent = new Intent(this, ParkingLotUpdateService.class);
-        intent.putExtra(getString(R.string.bundle_search_latitude), latitude);
-        intent.putExtra(getString(R.string.bundle_search_longitude), longitude);
-        intent.putExtra(getString(R.string.bundle_search_range), range);
-        startService(intent);
+        serviceIntent = new Intent(this, ParkingLotUpdateService.class);
+        serviceIntent.putExtra(getString(R.string.bundle_search_latitude), latitude);
+        serviceIntent.putExtra(getString(R.string.bundle_search_longitude), longitude);
+        serviceIntent.putExtra(getString(R.string.bundle_search_range), range);
+        startService(serviceIntent);
     }
 
     protected void Route(LatLng sourcePosition, LatLng destPosition, String mode) {

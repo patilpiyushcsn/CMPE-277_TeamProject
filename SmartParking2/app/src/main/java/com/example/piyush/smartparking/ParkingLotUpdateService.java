@@ -60,7 +60,7 @@ public class ParkingLotUpdateService extends Service {
                         }
                     }
 
-                    Thread.sleep(5000);
+                    Thread.sleep(2000);
                 } catch (IOException e) {
                     break;
                 } catch (InterruptedException e) {

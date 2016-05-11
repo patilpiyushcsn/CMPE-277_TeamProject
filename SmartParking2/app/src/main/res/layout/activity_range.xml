@@ -28,6 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/lbl_searchRange"
+        android:textStyle="bold"
         android:id="@+id/txtvw_saerchRange"
         android:layout_above="@+id/numberPicker"
         android:layout_centerHorizontal="true"
@@ -37,6 +38,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/lbl_miles"
+        android:textStyle="bold"
         android:id="@+id/textView"
         android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/numberPicker" />

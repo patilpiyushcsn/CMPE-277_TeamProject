@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:text="@string/lbl_cityZip"
         android:id="@+id/txtvw_cityZip"
+        android:textSize="17dp"
         android:layout_below="@+id/toolbar"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="106dp" />
